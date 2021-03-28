@@ -10,13 +10,16 @@ function Searchbar(props) {
     
     function handleSearch(e) {
         e.preventDefault();
+        props.setLoading(true);
         fetch('http://openlibrary.org/search.json?title="' + encodeURI(searchKey) + '"&page=' + 1)
         .then(res => res.json())
         .then(
             (response) => {
+                props.setLoading(false);
                 props.setResult(response);
             },
             (error) => {
+                props.setLoading(false);
                 console.log(error);
             }
         );
@@ -32,11 +35,15 @@ function Searchbar(props) {
 
 export default function BookSearch(props) {
     const [result, setResult] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
+
     return (
         <div>
             <h1>Open Library Book Search</h1>
-            <Searchbar setResult={setResult} />
-            {result && result.docs.length && <BookTable books={result.docs.slice(0, 11)}/>}
+            <Searchbar setResult={setResult} setLoading={setLoading}/>
+            {loading ? (<h1>Loading...</h1>) : (result && (result.docs.length ? (
+                <BookTable books={result.docs.slice(0, 11)}/>
+            ) : <h2>No Result Found</h2>))}
         </div>
     );
 }
