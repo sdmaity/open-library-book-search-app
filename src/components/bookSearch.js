@@ -1,6 +1,6 @@
 import React from 'react';
 import BookTable from './bookTable';
-
+import './bookSearch.css';
 
 //Component for the Search bar and Search button
 function Searchbar(props) {

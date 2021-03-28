@@ -1,0 +1,58 @@
+table, img {
+    width: 100%;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table thead tr {
+    background-color: rgba(247,247,247,.56);
+}
+
+table thead th {
+    background-color: rgba(241,242,243,.47);
+    text-align: left;
+    padding: 5px 1px 1px 5px;
+    border-bottom: 1px solid #efefef;
+}
+
+table tbody tr {
+    border-top: 1px solid #ecebeb;
+    padding: 0px;
+    color: #756e6e;
+}
+
+table tbody td {
+    padding: 1px 1px 1px 5px;
+    vertical-align: top;
+    word-break: break-word;
+}
+
+form {
+    padding-bottom: 5px;
+}
+
+form input {
+    height: 20px;
+    width: 90%;
+    border: none;
+    border-bottom: 1px solid #ddd;
+}
+
+form input:focus {
+    border-bottom: 2px solid #ddd;
+    outline: 0px;
+}
+
+form button {
+    margin-left: 10px;
+    background-color: #16dc16;
+}
+
+button, button:active, button:focus {
+    height: 25px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    outline: 0px;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import './bookSearch.css';
 
 
 //Single row of dissplaying book info
