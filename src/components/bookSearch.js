@@ -1,4 +1,5 @@
 import React from 'react';
+import BookTable from './bookTable';
 
 
 function Searchbar(props) {
@@ -13,7 +14,7 @@ function Searchbar(props) {
         .then(res => res.json())
         .then(
             (response) => {
-                console.log(response);
+                props.setResult(response);
             },
             (error) => {
                 console.log(error);
@@ -30,11 +31,12 @@ function Searchbar(props) {
 }
 
 export default function BookSearch(props) {
-
+    const [result, setResult] = React.useState(null);
     return (
         <div>
             <h1>Open Library Book Search</h1>
-            <Searchbar />
+            <Searchbar setResult={setResult} />
+            {result && result.docs.length && <BookTable books={result.docs.slice(0, 11)}/>}
         </div>
     );
 }
