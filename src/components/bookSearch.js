@@ -10,7 +10,7 @@ function Searchbar(props) {
     
     return (
         <form onSubmit={props.handleSubmit}>
-            <input type="text" placeHolder="Enter book name" value={props.searchKey} onChange={handleChange}/>
+            <input type="text" placeholder="Enter book name" value={props.searchKey} onChange={handleChange}/>
             <button type="submit">Search</button>
         </form>
     );
@@ -27,17 +27,26 @@ function Pagination(props) {
     );
 }
 
+//Total book search app
+//api returns 100 max data in 1 api call, we are showing 10 in a page and after showing the initial 100
+//calling the api for next 100 data
 export default function BookSearch(props) {
     const pageDataLength = 10; //showing 10 data per page
     const [result, setResult] = React.useState(null);
+    const [apiPage, setApiPage] = React.useState(1);
     const [pageNo, setPageNo] = React.useState(1);
     const [loading, setLoading] = React.useState(false);
     const [searchKey, setSearchKey] = React.useState('');
 
-    //handles pagination click
+    //handles pagination click if the request goes out of stored books calls api for the next set of 100 data
     function handlePaginationClick(next = true) {
         if (next) {
-            setPageNo(pageNo + 1);
+            let currentResultLength = result.docs.length;
+            if ((pageNo + 1) * pageDataLength > currentResultLength) {
+                apiCall(apiPage + 1);
+            } else {
+                setPageNo(pageNo + 1);
+            }
         } else {
             setPageNo(pageNo - 1)
         }
@@ -48,11 +57,17 @@ export default function BookSearch(props) {
     //we pass only title and page no. in the request
     function apiCall(page, reset = false) {
         setLoading(true);
+        setApiPage(page);
         fetch('http://openlibrary.org/search.json?title="' + encodeURI(searchKey) + '"&page=' + page)
         .then(res => res.json())
         .then(
             (response) => {
                 setLoading(false);
+                if (!reset && result && result.docs.length) {
+                    //adding to existing data set of books in case of pagination
+                    result.docs = result.docs.concat(response.docs);
+                    response = result;
+                }
                 setResult(response);
                 setPageNo(reset ? 1 : (pageNo + 1));
             },
