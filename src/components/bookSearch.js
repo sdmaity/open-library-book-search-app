@@ -4,31 +4,13 @@ import BookTable from './bookTable';
 
 //Component for the Search bar and Search button
 function Searchbar(props) {
-    const [searchKey, setSearchKey] = React.useState('');
     function handleChange(e) {
-        setSearchKey(e.target.value);
+        props.setSearchKey(e.target.value);
     }
     
-    function handleSearch(e) {
-        e.preventDefault();
-        props.setLoading(true);
-        fetch('http://openlibrary.org/search.json?title="' + encodeURI(searchKey) + '"&page=' + 1)
-        .then(res => res.json())
-        .then(
-            (response) => {
-                props.setLoading(false);
-                props.setResult(response);
-            },
-            (error) => {
-                props.setLoading(false);
-                console.log(error);
-            }
-        );
-    }
-
     return (
-        <form onSubmit={handleSearch}>
-            <input type="text" placeholder="Enter book name" value={props.searchKey} onChange={handleChange}/>
+        <form onSubmit={props.handleSubmit}>
+            <input type="text" placeHolder="Enter book name" value={props.searchKey} onChange={handleChange}/>
             <button type="submit">Search</button>
         </form>
     );
@@ -50,7 +32,9 @@ export default function BookSearch(props) {
     const [result, setResult] = React.useState(null);
     const [pageNo, setPageNo] = React.useState(1);
     const [loading, setLoading] = React.useState(false);
+    const [searchKey, setSearchKey] = React.useState('');
 
+    //handles pagination click
     function handlePaginationClick(next = true) {
         if (next) {
             setPageNo(pageNo + 1);
@@ -59,10 +43,36 @@ export default function BookSearch(props) {
         }
     }
 
+    //api call for fetching books data
+    //we are searching using book title this can be expanded fr searching using author, text, subject etc
+    //we pass only title and page no. in the request
+    function apiCall(page) {
+        setLoading(true);
+        fetch('http://openlibrary.org/search.json?title="' + encodeURI(searchKey) + '"&page=' + page)
+        .then(res => res.json())
+        .then(
+            (response) => {
+                setLoading(false);
+                setResult(response);
+            },
+            (error) => {
+                setLoading(false);
+                console.log(error);
+            }
+        );
+    }
+
+    //event for handling when user cicks search
+    //calls api and resets the storage
+    function handleSearch(e) {
+        e.preventDefault();
+        apiCall(1);
+    }
+
     return (
         <div>
             <h1>Open Library Book Search</h1>
-            <Searchbar setResult={setResult} setLoading={setLoading}/>
+            <Searchbar setSearchKey={setSearchKey} searchKey={searchKey} handleSubmit={handleSearch}/>
             {loading ? (<h1>Loading...</h1>) : (result && (result.docs.length ? (<>
                 <BookTable books={result.docs.slice((pageNo-1)*pageDataLength, pageNo*pageDataLength)}/>
                 <Pagination 
