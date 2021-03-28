@@ -46,7 +46,7 @@ export default function BookSearch(props) {
     //api call for fetching books data
     //we are searching using book title this can be expanded fr searching using author, text, subject etc
     //we pass only title and page no. in the request
-    function apiCall(page) {
+    function apiCall(page, reset = false) {
         setLoading(true);
         fetch('http://openlibrary.org/search.json?title="' + encodeURI(searchKey) + '"&page=' + page)
         .then(res => res.json())
@@ -54,6 +54,7 @@ export default function BookSearch(props) {
             (response) => {
                 setLoading(false);
                 setResult(response);
+                setPageNo(reset ? 1 : (pageNo + 1));
             },
             (error) => {
                 setLoading(false);
@@ -66,7 +67,7 @@ export default function BookSearch(props) {
     //calls api and resets the storage
     function handleSearch(e) {
         e.preventDefault();
-        apiCall(1);
+        apiCall(1, true);
     }
 
     return (
